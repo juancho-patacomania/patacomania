@@ -288,14 +288,14 @@
       <h3>Ingredientes</h3>
       <div class="section-label">Base <span class="required-badge">Obligatorio</span></div>
       <button class="ingredient-btn selected disabled-item" id="ing-patacon">
-        <span class="ing-icon">🫓</span><span class="ing-name">Patacón</span><span class="ing-price">incluido</span>
+        <span class="ing-icon">🫓</span><span class="ing-name">Patacón</span><span class="ing-price">$7.000</span>
       </button>
       <div class="section-label">Proteína <span class="required-badge">Elige 1</span></div>
       <button class="ingredient-btn" id="ing-carne" onclick="selectProtein('carne')">
-        <span class="ing-icon">🥩</span><span class="ing-name">Carne</span><span class="ing-price">$$$$</span>
+        <span class="ing-icon">🥩</span><span class="ing-name">Carne</span><span class="ing-price">+$2.500</span>
       </button>
       <button class="ingredient-btn" id="ing-pollo" onclick="selectProtein('pollo')">
-        <span class="ing-icon">🍗</span><span class="ing-name">Pollo</span><span class="ing-price">$$$$</span>
+        <span class="ing-icon">🍗</span><span class="ing-name">Pollo</span><span class="ing-price">+$2.000</span>
       </button>
       <div class="section-label">Gaseosa <span class="required-badge">Obligatorio</span></div>
       <button class="ingredient-btn" id="ing-pepsi" onclick="selectGaseosa('pepsi')">
@@ -306,16 +306,16 @@
       </button>
       <div class="section-label">Adicionales <span class="optional-badge">Opcional</span></div>
       <button class="ingredient-btn" id="ing-lechuga" onclick="toggleExtra('lechuga')">
-        <span class="ing-icon">🥬</span><span class="ing-name">Lechuga</span><span class="ing-price">$$$$</span>
+        <span class="ing-icon">🥬</span><span class="ing-name">Lechuga</span><span class="ing-price">+$500</span>
       </button>
       <button class="ingredient-btn" id="ing-aguacate" onclick="toggleExtra('aguacate')">
-        <span class="ing-icon">🥑</span><span class="ing-name">Aguacate</span><span class="ing-price">$$$$</span>
+        <span class="ing-icon">🥑</span><span class="ing-name">Aguacate</span><span class="ing-price">+$2.000</span>
       </button>
       <button class="ingredient-btn" id="ing-salchicha" onclick="toggleExtra('salchicha')">
-        <span class="ing-icon">🌭</span><span class="ing-name">Salchicha</span><span class="ing-price">$$$$</span>
+        <span class="ing-icon">🌭</span><span class="ing-name">Salchicha</span><span class="ing-price">+$2.000</span>
       </button>
       <button class="ingredient-btn" id="ing-salsas" onclick="toggleExtra('salsas')">
-        <span class="ing-icon">🫙</span><span class="ing-name">Salsas</span><span class="ing-price">$$$$</span>
+        <span class="ing-icon">🫙</span><span class="ing-name">Salsas</span><span class="ing-price">+$1.000</span>
       </button>
       <div class="section-label">Gaseosa extra <span class="optional-badge">+$500</span></div>
       <div style="background:var(--gold-pale);border-radius:12px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;">
@@ -328,7 +328,7 @@
       </div>
       <div class="section-label" style="margin-top:1.5rem;">Producto especial</div>
       <button class="ingredient-btn" id="ing-mixto" onclick="selectMixto()" style="border-color:var(--gold);background:var(--gold-pale);">
-        <span class="ing-icon">⭐</span><span class="ing-name">El Mixto (todo)</span><span class="ing-price" style="color:var(--orange);font-weight:800;">$$$$</span>
+        <span class="ing-icon">⭐</span><span class="ing-name">El Mixto (todo)</span><span class="ing-price" style="color:var(--orange);font-weight:800;">$17.000</span>
       </button>
     </div>
 
@@ -343,7 +343,7 @@
         </ul>
         <div class="order-total">
           <span class="total-label">Total estimado:</span>
-          <span class="total-price" id="total-price">$$$$</span>
+        <span class="total-price" id="total-price">$7.000</span>
         </div>
         <div id="missing-items-msg" class="missing-items" style="display:none;"></div>
       </div>
@@ -495,23 +495,23 @@ if (isConfigured) {
 // ============================================================
 const CAJA_PASS = "pata2024";
 const INGREDIENTES = {
-  patacon:    { nombre:"Patacón",    emoji:"🫓", precio:0 },
-  carne:      { nombre:"Carne",      emoji:"🥩", precio:null },
-  pollo:      { nombre:"Pollo",      emoji:"🍗", precio:null },
+  patacon:    { nombre:"Patacón",    emoji:"🫓", precio:7000 },
+  carne:      { nombre:"Carne",      emoji:"🥩", precio:2500 },
+  pollo:      { nombre:"Pollo",      emoji:"🍗", precio:2000 },
   pepsi:      { nombre:"Pepsi",      emoji:"🥤", precio:0 },
   colombiana: { nombre:"Colombiana", emoji:"🥤", precio:0 },
-  lechuga:    { nombre:"Lechuga",    emoji:"🥬", precio:null },
-  aguacate:   { nombre:"Aguacate",   emoji:"🥑", precio:null },
-  salchicha:  { nombre:"Salchicha",  emoji:"🌭", precio:null },
-  salsas:     { nombre:"Salsas",     emoji:"🫙", precio:null },
+  lechuga:    { nombre:"Lechuga",    emoji:"🥬", precio:500 },
+  aguacate:   { nombre:"Aguacate",   emoji:"🥑", precio:2000 },
+  salchicha:  { nombre:"Salchicha",  emoji:"🌭", precio:2000 },
+  salsas:     { nombre:"Salsas",     emoji:"🫙", precio:1000 },
 };
 const PRECIO_GASEOSA_EXTRA = 500;
-const PRECIO_MIXTO = null;
+const PRECIO_MIXTO = 17000;
 
 // ============================================================
 // STATE
 // ============================================================
-let currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, isMixto:false };
+let currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, gaseosaExtraSabores:[], isMixto:false };
 let deliveryType = 'aqui';
 let currentFilter = 'todos';
 let currentModalOrderId = null;
@@ -696,8 +696,53 @@ window.toggleExtra = function(e) {
 };
 
 window.changeGaseosaExtra = function(delta) {
-  currentOrder.gaseosaExtra = Math.max(0, currentOrder.gaseosaExtra + delta);
+  const newQty = Math.max(0, currentOrder.gaseosaExtra + delta);
+  if (delta > 0) {
+    // Add a new unit → ask for flavor
+    showGaseosaFlavorModal(currentOrder.gaseosaExtra);
+    return;
+  }
+  // Remove last unit
+  if (newQty < currentOrder.gaseosaExtra) {
+    currentOrder.gaseosaExtraSabores.pop();
+  }
+  currentOrder.gaseosaExtra = newQty;
   document.getElementById('gaseosa-extra-qty').textContent = currentOrder.gaseosaExtra;
+  updateSummary();
+};
+
+window.showGaseosaFlavorModal = function(currentIdx) {
+  // Build a small inline flavor selector
+  const existing = document.getElementById('gaseosa-flavor-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'gaseosa-flavor-modal';
+  modal.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000;padding:1rem;`;
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:20px;padding:1.5rem;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(107,58,42,0.25);">
+      <div style="font-size:2rem;margin-bottom:0.5rem;">🥤</div>
+      <h3 style="font-family:'Fredoka',sans-serif;color:var(--brown);font-size:1.4rem;margin-bottom:0.3rem;">¿Qué sabor?</h3>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.2rem;">Elige el sabor de la gaseosa extra (+$500)</p>
+      <div style="display:flex;gap:10px;">
+        <button onclick="confirmGaseosaFlavor('pepsi')" style="flex:1;padding:14px 10px;border:2px solid var(--gold-light);border-radius:12px;background:var(--gold-pale);cursor:pointer;font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--brown);font-weight:600;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--orange)'" onmouseout="this.style.borderColor='var(--gold-light)'">
+          🥤 Pepsi
+        </button>
+        <button onclick="confirmGaseosaFlavor('colombiana')" style="flex:1;padding:14px 10px;border:2px solid var(--gold-light);border-radius:12px;background:var(--gold-pale);cursor:pointer;font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--brown);font-weight:600;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--orange)'" onmouseout="this.style.borderColor='var(--gold-light)'">
+          🥤 Colombiana
+        </button>
+      </div>
+      <button onclick="document.getElementById('gaseosa-flavor-modal').remove()" style="margin-top:1rem;background:none;border:none;color:var(--text-muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.85rem;">Cancelar</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+};
+
+window.confirmGaseosaFlavor = function(sabor) {
+  currentOrder.gaseosaExtraSabores.push(sabor);
+  currentOrder.gaseosaExtra += 1;
+  document.getElementById('gaseosa-extra-qty').textContent = currentOrder.gaseosaExtra;
+  document.getElementById('gaseosa-flavor-modal').remove();
   updateSummary();
 };
 
@@ -716,8 +761,9 @@ window.selectMixto = function() {
 
 function calcTotal() {
   let total = 0;
-  if (currentOrder.isMixto) { total = PRECIO_MIXTO || 0; }
+  if (currentOrder.isMixto) { total = PRECIO_MIXTO; }
   else {
+    total += INGREDIENTES.patacon.precio; // base $7,000
     if (currentOrder.proteina) total += INGREDIENTES[currentOrder.proteina].precio || 0;
     currentOrder.extras.forEach(e => { total += INGREDIENTES[e].precio || 0; });
   }
@@ -741,7 +787,7 @@ function updateSummary() {
     items.push({ name:'⭐ El Mixto (todo incluido)', price:PRECIO_MIXTO });
     emojis = ['🫓','🥩','🍗','🥬','🥑','🌭','🫙','🥤'];
   } else {
-    items.push({ name:'🫓 Patacón', price:0 });
+    items.push({ name:'🫓 Patacón base', price:INGREDIENTES.patacon.precio });
     if (currentOrder.proteina) {
       const ing = INGREDIENTES[currentOrder.proteina];
       items.push({ name:ing.emoji+' '+ing.nombre, price:ing.precio }); emojis.push(ing.emoji);
@@ -755,8 +801,12 @@ function updateSummary() {
       items.push({ name:ing.emoji+' '+ing.nombre, price:ing.precio }); emojis.push(ing.emoji);
     });
   }
-  if (currentOrder.gaseosaExtra > 0)
-    items.push({ name:'🥤 Gaseosa extra x'+currentOrder.gaseosaExtra, price:currentOrder.gaseosaExtra*PRECIO_GASEOSA_EXTRA });
+  if (currentOrder.gaseosaExtra > 0) {
+    currentOrder.gaseosaExtraSabores.forEach((sabor, i) => {
+      const nombre = sabor === 'pepsi' ? 'Pepsi' : 'Colombiana';
+      items.push({ name:`🥤 Gaseosa extra #${i+1} – ${nombre}`, price:PRECIO_GASEOSA_EXTRA });
+    });
+  }
 
   list.innerHTML = items.map(it =>
     `<li class="order-item"><span class="name">${it.name}</span><span class="price">${it.note ? it.note : formatPrice(it.price)}</span></li>`
@@ -813,6 +863,7 @@ window.realizarPedido = async function() {
     gaseosa: currentOrder.gaseosa,
     extras: [...currentOrder.extras],
     gaseosaExtra: currentOrder.gaseosaExtra,
+    gaseosaExtraSabores: [...currentOrder.gaseosaExtraSabores],
     total: calcTotal(),
     status: 'inactivo',
     paymentMethod: null,
@@ -844,7 +895,7 @@ window.realizarPedido = async function() {
 };
 
 window.resetAndHome = function() {
-  currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, isMixto:false };
+  currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, gaseosaExtraSabores:[], isMixto:false };
   deliveryType = 'aqui';
   document.getElementById('client-name').value = '';
   document.getElementById('client-phone').value = '';
@@ -856,7 +907,7 @@ window.resetAndHome = function() {
   document.getElementById('opt-entrega').classList.remove('selected');
   document.getElementById('delivery-location-group').style.display = 'none';
   document.getElementById('order-items-list').innerHTML = '<li class="order-item" style="color:#aaa;font-size:0.9rem;justify-content:center;">Agrega ingredientes para empezar</li>';
-  document.getElementById('total-price').textContent = '$$$$';
+  document.getElementById('total-price').textContent = '$7.000';
   document.getElementById('missing-items-msg').style.display = 'none';
   document.getElementById('patacon-emoji').textContent = '🍽️';
   showScreen('menu');
@@ -886,7 +937,14 @@ function getOrderDescription(o) {
   if (o.proteina) parts.push(INGREDIENTES[o.proteina].emoji+' '+INGREDIENTES[o.proteina].nombre);
   if (o.gaseosa) parts.push(INGREDIENTES[o.gaseosa].emoji+' '+INGREDIENTES[o.gaseosa].nombre);
   if (o.extras) o.extras.forEach(e => parts.push(INGREDIENTES[e].emoji+' '+INGREDIENTES[e].nombre));
-  if (o.gaseosaExtra > 0) parts.push('🥤 Gaseosa extra x'+o.gaseosaExtra);
+  if (o.gaseosaExtra > 0) {
+    const sabores = o.gaseosaExtraSabores || [];
+    for (let i = 0; i < o.gaseosaExtra; i++) {
+      const s = sabores[i];
+      const nombre = s === 'pepsi' ? 'Pepsi' : s === 'colombiana' ? 'Colombiana' : '?';
+      parts.push('🥤 Gaseosa extra – ' + nombre);
+    }
+  }
   return parts.join(' · ');
 }
 
