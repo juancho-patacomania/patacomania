@@ -343,7 +343,7 @@
         </ul>
         <div class="order-total">
           <span class="total-label">Total estimado:</span>
-        <span class="total-price" id="total-price">$7.000</span>
+        <span class="total-price" id="total-price">$5.000</span>
         </div>
         <div id="missing-items-msg" class="missing-items" style="display:none;"></div>
       </div>
@@ -495,18 +495,18 @@ if (isConfigured) {
 // ============================================================
 const CAJA_PASS = "pata2024";
 const INGREDIENTES = {
-  patacon:    { nombre:"Patacón",    emoji:"🫓", precio:7000 },
-  carne:      { nombre:"Carne",      emoji:"🥩", precio:2500 },
-  pollo:      { nombre:"Pollo",      emoji:"🍗", precio:2000 },
+  patacon:    { nombre:"Patacón",    emoji:"🫓", precio:5000 },
+  carne:      { nombre:"Carne",      emoji:"🥩", precio:3500 },
+  pollo:      { nombre:"Pollo",      emoji:"🍗", precio:3000 },
   pepsi:      { nombre:"Pepsi",      emoji:"🥤", precio:0 },
   colombiana: { nombre:"Colombiana", emoji:"🥤", precio:0 },
   lechuga:    { nombre:"Lechuga",    emoji:"🥬", precio:500 },
-  aguacate:   { nombre:"Aguacate",   emoji:"🥑", precio:2000 },
-  salchicha:  { nombre:"Salchicha",  emoji:"🌭", precio:2000 },
+  aguacate:   { nombre:"Aguacate",   emoji:"🥑", precio:1000 },
+  salchicha:  { nombre:"Salchicha",  emoji:"🌭", precio:1000 },
   salsas:     { nombre:"Salsas",     emoji:"🫙", precio:1000 },
 };
 const PRECIO_GASEOSA_EXTRA = 500;
-const PRECIO_MIXTO = 17000;
+const PRECIO_MIXTO = 14000;
 
 // ============================================================
 // STATE
@@ -924,7 +924,7 @@ window.resetAndHome = function() {
   document.getElementById('opt-entrega').classList.remove('selected');
   document.getElementById('delivery-location-group').style.display = 'none';
   document.getElementById('order-items-list').innerHTML = '<li class="order-item" style="color:#aaa;font-size:0.9rem;justify-content:center;">Agrega ingredientes para empezar</li>';
-  document.getElementById('total-price').textContent = '$7.000';
+  document.getElementById('total-price').textContent = '$5.000';
   document.getElementById('missing-items-msg').style.display = 'none';
   document.getElementById('patacon-emoji').textContent = '🍽️';
   showScreen('menu');
