@@ -314,9 +314,10 @@
       <button class="ingredient-btn" id="ing-salchicha" onclick="toggleExtra('salchicha')">
         <span class="ing-icon">🌭</span><span class="ing-name">Chorizo</span><span class="ing-price">+$1.000</span>
       </button>
-      <button class="ingredient-btn" id="ing-salsas" onclick="toggleExtra('salsas')">
-        <span class="ing-icon">🫙</span><span class="ing-name">Salsas</span><span class="ing-price">+$1.000</span>
+      <button class="ingredient-btn" id="ing-salsas" onclick="showSalsasModal()">
+        <span class="ing-icon">🫙</span><span class="ing-name">Salsas</span><span class="ing-price">gratis</span>
       </button>
+      <div id="salsas-seleccionadas-label" style="display:none;font-size:0.78rem;color:var(--orange);font-weight:700;padding:2px 6px 6px 10px;"></div>
       <div class="section-label">Gaseosa extra <span class="optional-badge">+$500</span></div>
       <div style="background:var(--gold-pale);border-radius:12px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;">
         <span style="font-size:0.9rem;font-weight:700;color:var(--brown);">🥤 Gaseosa extra</span>
@@ -503,7 +504,7 @@ const INGREDIENTES = {
   lechuga:    { nombre:"Lechuga",    emoji:"🥬", precio:500 },
   aguacate:   { nombre:"Aguacate",   emoji:"🥑", precio:1000 },
   salchicha:  { nombre:"Salchicha",  emoji:"🌭", precio:1000 },
-  salsas:     { nombre:"Salsas",     emoji:"🫙", precio:1000 },
+  salsas:     { nombre:"Salsas",     emoji:"🫙", precio:0 },
 };
 const PRECIO_GASEOSA_EXTRA = 500;
 const PRECIO_MIXTO = 14000;
@@ -511,7 +512,7 @@ const PRECIO_MIXTO = 14000;
 // ============================================================
 // STATE
 // ============================================================
-let currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, gaseosaExtraSabores:[], isMixto:false };
+let currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, gaseosaExtraSabores:[], salsasSabores:[], isMixto:false };
 let deliveryType = 'aqui';
 let currentFilter = 'todos';
 let currentModalOrderId = null;
@@ -776,6 +777,87 @@ window.selectMixto = function() {
   updateSummary();
 };
 
+window.showSalsasModal = function() {
+  if (currentOrder.isMixto) return;
+  const existing = document.getElementById('salsas-modal');
+  if (existing) existing.remove();
+
+  const SALSAS = [
+    { id:'casa',   nombre:'Salsa de la casa', emoji:'🫙' },
+    { id:'tomate', nombre:'Salsa de tomate',  emoji:'🍅' },
+    { id:'rosada', nombre:'Salsa rosada',     emoji:'🌸' },
+  ];
+
+  const modal = document.createElement('div');
+  modal.id = 'salsas-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000;padding:1rem;';
+
+  const current = currentOrder.salsasSabores || [];
+
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:20px;padding:1.5rem;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(107,58,42,0.25);">
+      <div style="font-size:2rem;margin-bottom:0.5rem;">🫙</div>
+      <h3 style="font-family:'Fredoka',sans-serif;color:var(--brown);font-size:1.4rem;margin-bottom:0.3rem;">¿Cuáles salsas?</h3>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.2rem;">Selecciona una o varias · Gratis</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.2rem;">
+        ${SALSAS.map(s => `
+          <button id="salsa-opt-${s.id}" onclick="toggleSalsaOpt('${s.id}')"
+            style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid ${current.includes(s.id) ? 'var(--orange)' : 'var(--gold-light)'};
+            border-radius:12px;background:${current.includes(s.id) ? 'var(--orange)' : 'var(--gold-pale)'};
+            cursor:pointer;font-family:'Fredoka',sans-serif;font-size:1rem;
+            color:${current.includes(s.id) ? '#fff' : 'var(--brown)'};font-weight:600;transition:all 0.2s;width:100%;">
+            <span style="font-size:1.5rem;">${s.emoji}</span>
+            <span>${s.nombre}</span>
+            <span style="margin-left:auto;">${current.includes(s.id) ? '✅' : ''}</span>
+          </button>
+        `).join('')}
+      </div>
+      <button onclick="confirmSalsas()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#fff;border:none;border-radius:12px;font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;">Listo ✓</button>
+      <button onclick="document.getElementById('salsas-modal').remove()" style="margin-top:0.8rem;background:none;border:none;color:var(--text-muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.85rem;">Cancelar</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+};
+
+window.toggleSalsaOpt = function(id) {
+  const current = currentOrder.salsasSabores || [];
+  const idx = current.indexOf(id);
+  if (idx >= 0) current.splice(idx, 1); else current.push(id);
+  currentOrder.salsasSabores = current;
+
+  const NOMBRES = { casa:'Salsa de la casa', tomate:'Salsa de tomate', rosada:'Salsa rosada' };
+  const EMOJIS  = { casa:'🫙', tomate:'🍅', rosada:'🌸' };
+
+  const btn = document.getElementById('salsa-opt-'+id);
+  const selected = current.includes(id);
+  btn.style.borderColor = selected ? 'var(--orange)' : 'var(--gold-light)';
+  btn.style.background  = selected ? 'var(--orange)' : 'var(--gold-pale)';
+  btn.style.color       = selected ? '#fff' : 'var(--brown)';
+  btn.querySelector('span:last-child').textContent = selected ? '✅' : '';
+};
+
+window.confirmSalsas = function() {
+  const sabores = currentOrder.salsasSabores || [];
+  const ingBtn = document.getElementById('ing-salsas');
+  const label  = document.getElementById('salsas-seleccionadas-label');
+  const NOMBRES = { casa:'Salsa de la casa', tomate:'Salsa de tomate', rosada:'Salsa rosada' };
+
+  if (sabores.length > 0) {
+    if (!currentOrder.extras.includes('salsas')) currentOrder.extras.push('salsas');
+    ingBtn.classList.add('selected');
+    label.style.display = 'block';
+    label.textContent = '↳ ' + sabores.map(s => NOMBRES[s]).join(', ');
+  } else {
+    currentOrder.extras = currentOrder.extras.filter(e => e !== 'salsas');
+    ingBtn.classList.remove('selected');
+    label.style.display = 'none';
+    label.textContent = '';
+  }
+
+  document.getElementById('salsas-modal').remove();
+  updateSummary();
+};
+
 function calcTotal() {
   let total = 0;
   if (currentOrder.isMixto) { total = PRECIO_MIXTO; }
@@ -815,7 +897,13 @@ function updateSummary() {
     }
     currentOrder.extras.forEach(e => {
       const ing = INGREDIENTES[e];
-      items.push({ name:ing.emoji+' '+ing.nombre, price:ing.precio }); emojis.push(ing.emoji);
+      if (e === 'salsas') {
+        const NOMBRES = { casa:'Salsa de la casa', tomate:'Salsa de tomate', rosada:'Salsa rosada' };
+        const saboresTexto = (currentOrder.salsasSabores||[]).map(s=>NOMBRES[s]).join(', ') || 'Salsas';
+        items.push({ name:'🫙 '+saboresTexto, price:0, note:'gratis' }); emojis.push('🫙');
+      } else {
+        items.push({ name:ing.emoji+' '+ing.nombre, price:ing.precio }); emojis.push(ing.emoji);
+      }
     });
   }
   if (currentOrder.gaseosaExtra > 0) {
@@ -876,6 +964,7 @@ window.realizarPedido = async function() {
     code, name, phone, deliveryType,
     deliveryLocation: location || null,
     isMixto: currentOrder.isMixto,
+    salsasSabores: [...(currentOrder.salsasSabores||[])],
     proteina: currentOrder.proteina,
     gaseosa: currentOrder.gaseosa,
     extras: [...currentOrder.extras],
@@ -912,7 +1001,8 @@ window.realizarPedido = async function() {
 };
 
 window.resetAndHome = function() {
-  currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, gaseosaExtraSabores:[], isMixto:false };
+  currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, gaseosaExtraSabores:[], salsasSabores:[], isMixto:false };
+  document.getElementById('salsas-seleccionadas-label').style.display = 'none';
   deliveryType = 'aqui';
   document.getElementById('client-name').value = '';
   document.getElementById('client-phone').value = '';
