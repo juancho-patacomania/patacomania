@@ -552,6 +552,23 @@ async function fbAddHistorial(order) {
   await addDoc(collection(db, "historial"), order);
 }
 
+async function fbDeleteHistorialItem(fbId) {
+  if (!db) {
+    const h = localGet('pm_historial').filter(o => o.id !== fbId);
+    localSave('pm_historial', h);
+    return;
+  }
+  await deleteDoc(doc(db, "historial", fbId));
+}
+
+async function fbClearHistorial() {
+  if (!db) { localSave('pm_historial', []); return; }
+  const snap = await getDocs(collection(db, "historial"));
+  const batch = [];
+  snap.docs.forEach(d => batch.push(deleteDoc(doc(db, "historial", d.id))));
+  await Promise.all(batch);
+}
+
 async function fbGetHistorial() {
   if (!db) return localGet('pm_historial');
   const q = query(collection(db, "historial"), orderBy("deliveredAt", "desc"));
@@ -1107,7 +1124,14 @@ async function renderHistorial() {
     <div class="resumen-card"><div class="rc-label">💵 Efectivo</div><div class="rc-value">${formatPrice(efectivo)}</div></div>
     <div class="resumen-card"><div class="rc-label">📲 Nequi</div><div class="rc-value">${formatPrice(nequi)}</div></div>
   `;
-  if (h.length === 0) { tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:#aaa;padding:2rem;">No hay ventas aún</td></tr>`; return; }
+
+  // Clear all button
+  const clearBar = document.getElementById('historial-clear-bar');
+  if (clearBar) {
+    clearBar.style.display = h.length > 0 ? 'flex' : 'none';
+  }
+
+  if (h.length === 0) { tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;color:#aaa;padding:2rem;">No hay ventas aún</td></tr>`; return; }
   tbody.innerHTML = h.map(o => `
     <tr>
       <td><strong style="color:var(--orange);font-family:'Fredoka',sans-serif;">${o.code}</strong></td>
@@ -1117,9 +1141,28 @@ async function renderHistorial() {
       <td>${o.paymentMethod==='nequi' ? '📲 Nequi' : '💵 Efectivo'}</td>
       <td>${o.deliveryType==='aqui' ? '🪑 Aquí' : '🚶 '+o.deliveryLocation}</td>
       <td style="font-size:0.8rem;">${o.createdAt}</td>
+      <td>
+        <button onclick="deleteHistorialItem('${o._fbId || o.id}')" title="Eliminar registro"
+          style="background:none;border:1px solid #ffcdd2;color:#E53935;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:0.85rem;transition:all 0.2s;"
+          onmouseover="this.style.background='#E53935';this.style.color='#fff'"
+          onmouseout="this.style.background='none';this.style.color='#E53935'">🗑️</button>
+      </td>
     </tr>
   `).join('');
 }
+
+window.deleteHistorialItem = async function(id) {
+  if (!confirm('¿Eliminar este registro del historial?')) return;
+  await fbDeleteHistorialItem(id);
+  renderHistorial();
+};
+
+window.clearAllHistorial = async function() {
+  if (!confirm('⚠️ ¿Eliminar TODO el historial?\n\nEsta acción no se puede deshacer.')) return;
+  if (!confirm('¿Estás seguro? Se borrarán todos los registros de ventas.')) return;
+  await fbClearHistorial();
+  renderHistorial();
+};
 
 // ============================================================
 // CLOSE MODAL ON BACKDROP
