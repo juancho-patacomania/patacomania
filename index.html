@@ -768,12 +768,117 @@ window.selectMixto = function() {
   currentOrder.isMixto = !currentOrder.isMixto;
   if (currentOrder.isMixto) {
     currentOrder.proteina = null; currentOrder.gaseosa = null; currentOrder.extras = [];
+    currentOrder.salsasSabores = []; currentOrder.mixtoGaseosa = null; currentOrder.mixtoSalsas = [];
     document.querySelectorAll('.ingredient-btn').forEach(b => b.classList.remove('selected'));
     document.getElementById('ing-patacon').classList.add('selected');
     document.getElementById('ing-mixto').classList.add('selected');
+    showMixtoGaseosaModal();
   } else {
     document.getElementById('ing-mixto').classList.remove('selected');
+    currentOrder.mixtoGaseosa = null; currentOrder.mixtoSalsas = [];
+    updateSummary();
   }
+};
+
+window.showMixtoGaseosaModal = function() {
+  const existing = document.getElementById('mixto-gaseosa-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'mixto-gaseosa-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000;padding:1rem;';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:20px;padding:1.5rem;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(107,58,42,0.25);">
+      <div style="font-size:2rem;margin-bottom:0.5rem;">🥤</div>
+      <h3 style="font-family:'Fredoka',sans-serif;color:var(--brown);font-size:1.4rem;margin-bottom:0.3rem;">¿Qué gaseosa con el Mixto?</h3>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.2rem;">Elige una opción · incluida</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.2rem;">
+        <button onclick="confirmMixtoGaseosa('pepsi')" class="mixto-g-btn" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid var(--gold-light);border-radius:12px;background:var(--gold-pale);cursor:pointer;font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--brown);font-weight:600;width:100%;">
+          <span style="font-size:1.5rem;">🥤</span><span>Pepsi</span>
+        </button>
+        <button onclick="confirmMixtoGaseosa('colombiana')" class="mixto-g-btn" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid var(--gold-light);border-radius:12px;background:var(--gold-pale);cursor:pointer;font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--brown);font-weight:600;width:100%;">
+          <span style="font-size:1.5rem;">🥤</span><span>Colombiana</span>
+        </button>
+        <button onclick="confirmMixtoGaseosa('ninguna')" class="mixto-g-btn" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid var(--gold-light);border-radius:12px;background:var(--gold-pale);cursor:pointer;font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--brown);font-weight:600;width:100%;">
+          <span style="font-size:1.5rem;">🚫</span><span>Ninguna</span>
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+};
+
+window.confirmMixtoGaseosa = function(sabor) {
+  currentOrder.mixtoGaseosa = sabor;
+  document.getElementById('mixto-gaseosa-modal').remove();
+  showMixtoSalsasModal();
+};
+
+window.showMixtoSalsasModal = function() {
+  const existing = document.getElementById('mixto-salsas-modal');
+  if (existing) existing.remove();
+
+  const SALSAS = [
+    { id:'casa',    nombre:'Salsa de la casa', emoji:'🫙' },
+    { id:'tomate',  nombre:'Salsa de tomate',  emoji:'🍅' },
+    { id:'rosada',  nombre:'Salsa rosada',      emoji:'🌸' },
+    { id:'ninguna', nombre:'Ninguna',            emoji:'🚫' },
+  ];
+
+  const modal = document.createElement('div');
+  modal.id = 'mixto-salsas-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000;padding:1rem;';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:20px;padding:1.5rem;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(107,58,42,0.25);">
+      <div style="font-size:2rem;margin-bottom:0.5rem;">🫙</div>
+      <h3 style="font-family:'Fredoka',sans-serif;color:var(--brown);font-size:1.4rem;margin-bottom:0.3rem;">¿Cuáles salsas con el Mixto?</h3>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.2rem;">Selecciona una o varias · Gratis</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.2rem;">
+        ${SALSAS.map(s => `
+          <button id="mixto-salsa-opt-${s.id}" onclick="toggleMixtoSalsa('${s.id}')"
+            style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid var(--gold-light);
+            border-radius:12px;background:var(--gold-pale);cursor:pointer;font-family:'Fredoka',sans-serif;
+            font-size:1rem;color:var(--brown);font-weight:600;width:100%;transition:all 0.2s;">
+            <span style="font-size:1.5rem;">${s.emoji}</span>
+            <span>${s.nombre}</span>
+            <span style="margin-left:auto;"></span>
+          </button>
+        `).join('')}
+      </div>
+      <button onclick="confirmMixtoSalsas()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#fff;border:none;border-radius:12px;font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;">Listo ✓</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+};
+
+window.toggleMixtoSalsa = function(id) {
+  let current = currentOrder.mixtoSalsas || [];
+
+  // Si elige "ninguna", deselecciona todo lo demás
+  if (id === 'ninguna') {
+    current = current.includes('ninguna') ? [] : ['ninguna'];
+  } else {
+    // Si elige otra, quita "ninguna"
+    current = current.filter(s => s !== 'ninguna');
+    const idx = current.indexOf(id);
+    if (idx >= 0) current.splice(idx, 1); else current.push(id);
+  }
+  currentOrder.mixtoSalsas = current;
+
+  const SALSAS_IDS = ['casa','tomate','rosada','ninguna'];
+  SALSAS_IDS.forEach(sid => {
+    const btn = document.getElementById('mixto-salsa-opt-'+sid);
+    if (!btn) return;
+    const sel = current.includes(sid);
+    btn.style.borderColor = sel ? 'var(--orange)' : 'var(--gold-light)';
+    btn.style.background  = sel ? 'var(--orange)'  : 'var(--gold-pale)';
+    btn.style.color       = sel ? '#fff'           : 'var(--brown)';
+    btn.querySelector('span:last-child').textContent = sel ? '✅' : '';
+  });
+};
+
+window.confirmMixtoSalsas = function() {
+  document.getElementById('mixto-salsas-modal').remove();
   updateSummary();
 };
 
@@ -885,6 +990,16 @@ function updateSummary() {
   if (currentOrder.isMixto) {
     items.push({ name:'⭐ El Mixto (todo incluido)', price:PRECIO_MIXTO });
     emojis = ['🫓','🥩','🍗','🥬','🥑','🌭','🫙','🥤'];
+    const GNOMBRES = { pepsi:'Pepsi', colombiana:'Colombiana', ninguna:'Sin gaseosa' };
+    const SNOMBRES = { casa:'Salsa de la casa', tomate:'Salsa de tomate', rosada:'Salsa rosada', ninguna:'Sin salsas' };
+    if (currentOrder.mixtoGaseosa) {
+      items.push({ name:'🥤 ' + GNOMBRES[currentOrder.mixtoGaseosa], price:0, note:'incluida' });
+    }
+    const mixtoSalsas = currentOrder.mixtoSalsas || [];
+    if (mixtoSalsas.length > 0) {
+      const salsaTexto = mixtoSalsas.map(s => SNOMBRES[s]).join(', ');
+      items.push({ name:'🫙 ' + salsaTexto, price:0, note:'gratis' });
+    }
   } else {
     items.push({ name:'🫓 Patacón base', price:INGREDIENTES.patacon.precio });
     if (currentOrder.proteina) {
@@ -965,6 +1080,8 @@ window.realizarPedido = async function() {
     deliveryLocation: location || null,
     isMixto: currentOrder.isMixto,
     salsasSabores: [...(currentOrder.salsasSabores||[])],
+    mixtoGaseosa: currentOrder.mixtoGaseosa || null,
+    mixtoSalsas: [...(currentOrder.mixtoSalsas||[])],
     proteina: currentOrder.proteina,
     gaseosa: currentOrder.gaseosa,
     extras: [...currentOrder.extras],
@@ -1001,7 +1118,7 @@ window.realizarPedido = async function() {
 };
 
 window.resetAndHome = function() {
-  currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, gaseosaExtraSabores:[], salsasSabores:[], isMixto:false };
+  currentOrder = { proteina:null, gaseosa:null, extras:[], gaseosaExtra:0, gaseosaExtraSabores:[], salsasSabores:[], isMixto:false, mixtoGaseosa:null, mixtoSalsas:[] };
   document.getElementById('salsas-seleccionadas-label').style.display = 'none';
   deliveryType = 'aqui';
   document.getElementById('client-name').value = '';
@@ -1039,7 +1156,14 @@ window.filterOrders = function(filter) {
 };
 
 function getOrderDescription(o) {
-  if (o.isMixto) return '⭐ El Mixto';
+  if (o.isMixto) {
+    const GNOMBRES = { pepsi:'Pepsi', colombiana:'Colombiana', ninguna:'Sin gaseosa' };
+    const SNOMBRES = { casa:'Salsa de la casa', tomate:'Salsa de tomate', rosada:'Salsa rosada', ninguna:'Sin salsas' };
+    let desc = '⭐ El Mixto';
+    if (o.mixtoGaseosa) desc += ' · 🥤 ' + GNOMBRES[o.mixtoGaseosa];
+    if (o.mixtoSalsas && o.mixtoSalsas.length > 0) desc += ' · 🫙 ' + o.mixtoSalsas.map(s=>SNOMBRES[s]).join(', ');
+    return desc;
+  }
   let parts = ['🫓 Patacón'];
   if (o.proteina) parts.push(INGREDIENTES[o.proteina].emoji+' '+INGREDIENTES[o.proteina].nombre);
   if (o.gaseosa) parts.push(INGREDIENTES[o.gaseosa].emoji+' '+INGREDIENTES[o.gaseosa].nombre);
